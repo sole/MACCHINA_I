@@ -1,39 +1,9 @@
 <!doctype html>
 <html>
 	<head>
+		<meta charset="utf8" />
 		<title>MACCHINA I</title>
-		<script type="text/javascript" src="js/libs/Tween.js"></script>
-		<script type="text/javascript" src="js/libs/Sorollet.js"></script>
-		<script type="text/javascript" src="js/libs/RequestAnimationFrame.js"></script>
-		<script type="text/javascript" src="js/libs/EventTarget.js"></script>
-		<script type="text/javascript" src="js/Player.js"></script>
-		<script type="text/javascript" src="js/Scene.js"></script>
-		<script type="text/javascript" src="js/Scene01.js"></script>
-		<script type="text/javascript" src="js/palette.js"></script>
-		<script type="text/javascript" src="js/Text.js"></script>
-		<script type="text/javascript" src="js/macchina.js"></script>
 		<link href="css/s.css" rel="stylesheet" type="text/css" />
-		<script type="text/javascript">
-			window.onload = function() {
-				MACCHINA.init();
-			}
-		</script>
-		
-		<script type="text/javascript">
-
-  var _gaq = _gaq || [];
-  _gaq.push(['_setAccount', 'UA-384699-9']);
-  _gaq.push(['_trackPageview']);
-  _gaq.push(['_setDomainName', '5013.es']);
-
-  (function() {
-    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-  })();
-
-</script>
-
 	</head>
 	<body>
 		<div id="wrapper">
@@ -49,5 +19,38 @@
 				<li><a href="http://5013.es/p/d/">ABOUT</a></li>
 			</ul>
 		</div>
+		<script src="js/libs/AudioContextMonkeyPatch.js"></script>
+		<script src="js/libs/AudioDetector.js"></script>
+		<script src="js/libs/Tween.js"></script>
+		<script src="js/libs/Sorollet.js"></script>
+		<script src="js/libs/RequestAnimationFrame.js"></script>
+		<script src="js/libs/EventTarget.js"></script>
+		<script src="js/Player.js"></script>
+		<script src="js/Scene.js"></script>
+		<script src="js/Scene01.js"></script>
+		<script src="js/palette.js"></script>
+		<script src="js/Text.js"></script>
+		<script src="js/macchina.js"></script>
+		<script type="text/javascript">
+			window.onload = function() {
+				MACCHINA.init();
+			}
+		</script>
+		
+		<script type="text/javascript">
+
+			var _gaq = _gaq || [];
+			_gaq.push(['_setAccount', 'UA-384699-9']);
+			_gaq.push(['_trackPageview']);
+			_gaq.push(['_setDomainName', '5013.es']);
+
+			(function() {
+			 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+			 })();
+
+		 </script>
+
 	</body>
 </html>

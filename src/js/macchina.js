@@ -51,7 +51,7 @@ var MACCHINA = (function() {
 	function notifyReady() {
 		var start = document.querySelector('#start');
 		start.addEventListener('click', play, false);
-		start.innerText = 'START';
+		start.innerHTML = 'START';
 	}
 
 	function play() {
@@ -264,8 +264,7 @@ var MACCHINA = (function() {
 	
 	this.init = function() {
 	
-		if(!AudioDetector.audioContext || !AudioDetector.oggSupport) {
-			AudioDetector.addGetWebAudioMessage();
+		if(!AudioDetector.detects(['webAudioSupport', 'oggSupport'])) {
 			return;
 		}
 
@@ -331,8 +330,23 @@ var MACCHINA = (function() {
 			buttonsTable.appendChild(tr);
 		}
 
+		// Audio setup
+		audioContext = new AudioContext();
 
-		synthPlayer = new MACCHINA_Player(44100); // TODO could this be read?
+		var convolverNode = audioContext.createConvolver(),
+			preCompressorGainNode = audioContext.createGain(),
+			compressorNode = audioContext.createDynamicsCompressor();
+
+		compressorNode.threshold.value = -5;
+
+		preCompressorGainNode.gain.value = 0.8;
+		preCompressorGainNode.connect(compressorNode);
+		compressorNode.connect(audioContext.destination);
+
+		jsAudioNode = audioContext.createScriptProcessor(4096);
+		jsAudioNode.onaudioprocess = audioProcess;
+
+		synthPlayer = new MACCHINA_Player(audioContext.sampleRate);
 		synthPlayer.repeat = true;
 
 		// Totally invent instruments
@@ -444,21 +458,7 @@ var MACCHINA = (function() {
 
 		}, false);
 
-		// Audio setup
-		audioContext = new webkitAudioContext();
-
-		var convolverNode = audioContext.createConvolver(),
-			preCompressorGainNode = audioContext.createGainNode(),
-			compressorNode = audioContext.createDynamicsCompressor();
-
-		compressorNode.threshold.value = -5;
-
-		preCompressorGainNode.gain.value = 0.8;
-		preCompressorGainNode.connect(compressorNode);
-		compressorNode.connect(audioContext.destination);
-
-		jsAudioNode = audioContext.createJavaScriptNode(4096);
-		jsAudioNode.onaudioprocess = audioProcess;
+		
 
 		// Loading convolver response asynchronously
 		var request = new XMLHttpRequest();
@@ -476,74 +476,15 @@ var MACCHINA = (function() {
 
 					notifyReady();
 				},
-				function() {
+				function(err) {
 					// onError
+					console.log('errorrrr', err);
 				}
 			);
-		}
+		};
 		request.send();
-	}
+	};
+
 	return this;
 })();
 
-/**
- * Based on Detector.js by alteredq and mr.doob
- */
-
-AudioDetector = {
-
-	audioContext: !! window.webkitAudioContext,
-	oggSupport: document.createElement('audio').canPlayType('audio/ogg'),
-
-	getErrorMessage: function () {
-
-		var element = document.createElement( 'div' );
-		element.id = 'audio-error-message';
-		element.style.fontFamily = 'monospace';
-		element.style.fontSize = '13px';
-		element.style.fontWeight = 'normal';
-		element.style.textAlign = 'center';
-		element.style.background = '#fff';
-		element.style.color = '#000';
-		element.style.padding = '1.5em';
-		element.style.width = '350px';
-		element.style.margin = '5em auto 0';
-		element.style.zIndex = 1000;
-		element.style.position = 'relative';
-
-		if ( ! this.oggSupport ) {
-			element.innerHTML = [
-				'Your browser does not seem to support OGG audio.<br/>',
-				'Find out how to get it <a href="https://developer.mozilla.org/En/Media_formats_supported_by_the_audio_and_video_elements" style="color:#000">here</a>.'
-			].join( '\n' );
-		}
-		else if ( ! this.audioContext ) {
-
-			element.innerHTML = [
-				'Your browser does not seem to support the <a href="https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html" style="color:#000">Web Audio API</a>.<br/>',
-				'Find out how to get it <a href="http://chromium.googlecode.com/svn/trunk/samples/audio/index.html" style="color:#000">here</a>.'
-			].join( '\n' );
-
-		}
-
-		return element;
-
-	},
-
-	addGetWebAudioMessage: function ( parameters ) {
-
-		var parent, id, element;
-
-		parameters = parameters || {};
-
-		parent = parameters.parent !== undefined ? parameters.parent : document.body;
-		id = parameters.id !== undefined ? parameters.id : 'oldie';
-
-		element = AudioDetector.getErrorMessage();
-		element.id = id;
-
-		parent.appendChild( element );
-
-	}
-
-};
